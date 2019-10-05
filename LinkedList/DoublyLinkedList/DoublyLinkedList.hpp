@@ -39,7 +39,7 @@ public:
 	void InsertAfter(T toSearch, T elem); // Insert an element after a given element.
 	void Remove(T toDelete); // Remove random element from the list.
 	bool isEmpty() const;
-	void Print();
+	void Print() const;
 
 	Node* Search(T toSearch) {
 
@@ -209,13 +209,14 @@ bool LinkedList<T>::isEmpty() const {
 }
 
 template<typename T>
-void LinkedList<T>::Print() {
+void LinkedList<T>::Print() const {
 
 	Node* iter = head;
-	while (iter != nullptr) {
+	while (iter->next != nullptr) {
 		std::cout << iter->data << " <-> ";
 		iter = iter->next;
 	}
+	std::cout << iter->data;
 }
 
 #endif // !DOUBLYLINKEDLIST_HDR
