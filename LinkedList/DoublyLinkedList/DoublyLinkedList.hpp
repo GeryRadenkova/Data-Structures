@@ -1,83 +1,49 @@
+#ifndef DOUBLYLINKEDLIST_HDR
+#define DOUBLYLINKEDLIST_HDR
+
 #include<iostream>
 
 template<typename T>
-struct Node {
-
-	T data;
-	Node* next;
-	Node* prev;
-
-	Node(T data) {
-		this->data = data;
-		next = nullptr;
-		prev = nullptr;
-	}
-};
-
-template<typename T>
-class DoublyLinkedList {
+class LinkedList {
 
 private:
-	Node<T>* head;
-	Node<T>* tail;
+	struct Node {
+
+		T data;
+		Node* next;
+		Node* prev;
+
+		Node(T data) {
+			this->data = data;
+			next = nullptr;
+			prev = nullptr;
+		}
+	};
+
+	Node* head;
+	Node* tail;
+
+	void CopyFrom(const LinkedList& other);
+	void Free();
 
 public:
-	DoublyLinkedList() {
-		head = nullptr;
-		tail = nullptr;
-	}
+	LinkedList();
+	LinkedList(const LinkedList& other);
+	LinkedList& operator=(const LinkedList& other);
+	~LinkedList();
 
-	void AddFirst(T elem) {
+	void PushFront(T elem); // Insert new element in the begining of the list. Time complexity: O(1)
+	void PushBack(T elem); // Insert new element at the end of the list. Time complexity: O(1)
+	void PopFront(); // Remove the first element. Time complexity: O(1)
+	void PopBack(); // Remove the last element. Time complexity: O(1)
+	void InsertAfter(T toSearch, T elem); // Insert an element after a given element.
+	void Remove(T toDelete); // Remove random element from the list.
+	bool isEmpty() const;
+	void Print();
 
-		Node<T>* newElem = new Node<T>(elem);
-		if (head == nullptr) {
-			head = newElem;
-			tail = newElem;
-		}
-		else {
-			newElem->next = head;
-			head->prev = newElem;
-			head = newElem;
-		}
-	}
+	Node* Search(T toSearch) {
 
-	void AddLast(T elem) {
-
-		Node<T>* newElem = new Node<T>(elem);
-		if (tail == nullptr) {
-			head = newElem;
-			tail = newElem;
-		}
-		else {
-			newElem->prev = tail;
-			tail->next = newElem;
-			tail = newElem;
-		}
-	}
-
-	void AddAfterGivenNode(T toSearch, T elem) {
-
-		Node<T>* iter = Search(toSearch);
-
-		if (iter == nullptr)
-			return;
-
-		if (iter == head)
-			AddFirst(elem);
-		else if (iter == tail)
-			AddLast(elem);
-		else {
-			Node<T>* newElem = new Node<T>(elem);
-			newElem->next = iter->next;
-			iter->next->prev = newElem;
-			iter->next = newElem;
-			newElem->prev = iter;
-		}
-	}
-
-	Node<T>* Search(T toSearch) {
-
-		Node<T>* iter = head;
+		Node* iter = head;
 
 		while (iter != nullptr) {
 			if (iter->data == toSearch)
@@ -89,68 +55,167 @@ public:
 		return nullptr;
 	}
 
-	void RemoveFirst() {
-
-		if (head == nullptr)
-			return;
-		else if (head == tail) 
-			delete head;
-		else {
-			head = head->next;
-			delete head->prev;
-			head->prev = nullptr;
-		}
-	}
-
-	void RemoveLast() {
-		
-		if (tail == nullptr)
-			return;
-		else if (head == tail)
-			delete tail;
-		else {
-			tail = tail->prev;
-			delete tail->next;
-			tail->next = nullptr;
-		}
-	}
-
-	void RemoveNodeByData(T toDelete) {
-
-		Node<T>* iter = Search(toDelete);
-
-		if (iter == nullptr)
-			return;
-	
-		if (iter == head)
-			RemoveFirst();
-		else if (iter == tail)
-			RemoveLast();
-		else {
-			iter->next->prev = iter->prev;
-			iter->prev->next = iter->next;
-			delete iter;
-		}
-	}
-
-	void Print() {
-
-		Node<T>* iter = head;
-		while (iter != nullptr) {
-			std::cout << iter->data << " <-> ";
-			iter = iter->next;
-		}
-	}
-
-	~DoublyLinkedList() {
-
-		Node<T>* current = head;
-		while (current != nullptr) {
-
-			Node<T>* next = current->next;
-			delete current;
-			current = next;
-		}
-	}
-
 };
+
+template<typename T>
+void LinkedList<T>::CopyFrom(const LinkedList& other) {
+
+	Node* iter = other.head;
+	while (iter != nullptr) {
+		PushBack(iter->data);
+		iter = iter->next;
+	}
+}
+
+template<typename T>
+void LinkedList<T>::Free() {
+
+	Node* toDelete = head;
+	while (toDelete != nullptr) {
+		Node* next = toDelete->next;
+		delete toDelete;
+		toDelete = next;
+	}
+}
+
+template<typename T>
+LinkedList<T>::LinkedList() {
+	head = nullptr;
+	tail = nullptr;
+}
+
+template<typename T>
+LinkedList<T>::LinkedList(const LinkedList& other) {
+	CopyFrom(other);
+}
+
+template<typename T>
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other) {
+
+	if (this != other) {
+		Free();
+		CopyFrom(other);
+	}
+
+	return *this;
+}
+
+template<typename T>
+LinkedList<T>::~LinkedList() {
+	Free();
+}
+
+template<typename T>
+void LinkedList<T>::PushFront(T elem) {
+
+	Node* newElem = new Node(elem);
+
+	if (isEmpty())
+		head = tail = newElem;
+	else {
+		newElem->next = head;
+		head->prev = newElem;
+		head = newElem;
+	}
+}
+
+template<typename T>
+void LinkedList<T>::PushBack(T elem) {
+
+	Node* newElem = new Node(elem);
+
+	if (isEmpty())
+		head = tail = newElem;
+	else {
+		newElem->prev = tail;
+		tail->next = newElem;
+		tail = newElem;
+	}
+}
+
+template<typename T>
+void LinkedList<T>::PopFront() {
+
+	if (isEmpty())
+		throw std::logic_error("The list is empty.\n");
+	else if (head == tail) {
+		delete head;
+		head = tail = nullptr;
+	}
+	else {
+		head = head->next;
+		delete head->prev;
+		head->prev = nullptr;
+	}
+}
+
+template<typename T>
+void LinkedList<T>::PopBack() {
+
+	if (isEmpty())
+		throw std::logic_error("The list is empty.\n");
+	else if (head == tail) {
+		delete head;
+		head = tail = nullptr;
+	}
+	else {
+		tail = tail->prev;
+		delete tail->next;
+		tail->next = nullptr;
+	}
+}
+
+template<typename T>
+void LinkedList<T>::InsertAfter(T toSearch, T elem) {
+
+	Node* iter = Search(toSearch);
+
+	if (isEmpty())
+		return;
+
+	if (iter == tail)
+		PushBack(elem);
+	else {
+		Node* newElem = new Node(elem);
+		newElem->next = iter->next;
+		iter->next->prev = newElem;
+		iter->next = newElem;
+		newElem->prev = iter;
+	}
+}
+
+template<typename T>
+void LinkedList<T>::Remove(T toDelete) {
+
+	Node* iter = Search(toDelete);
+
+	if (isEmpty())
+		return;
+
+	if (iter == head)
+		PopFront();
+	else if (iter == tail)
+		PopBack();
+	else {
+		iter->next->prev = iter->prev;
+		iter->prev->next = iter->next;
+		delete iter;
+	}
+}
+
+template<typename T>
+bool LinkedList<T>::isEmpty() const {
+	return head == nullptr;
+}
+
+template<typename T>
+void LinkedList<T>::Print() {
+
+	Node* iter = head;
+	while (iter != nullptr) {
+		std::cout << iter->data << " <-> ";
+		iter = iter->next;
+	}
+}
+
+#endif // !DOUBLYLINKEDLIST_HDR
