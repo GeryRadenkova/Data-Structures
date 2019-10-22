@@ -21,8 +21,8 @@ private:
 	void resize(size_t newCap);
 
 public:
-	void push(const T& newElem); //add a new element
-	T pop();
+	void push(const T& newElem); //add a new element O(1)
+	T pop();  //remove an element O(1)
 	T top() const;
 	bool isEmpty() const;
 
