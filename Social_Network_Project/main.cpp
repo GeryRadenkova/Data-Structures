@@ -12,7 +12,9 @@ int main() {
 	sn.link("Ivan", "Gosho");
 	sn.find("Pesho");
 
-	sn.delink("Pesho", "Ivan");
+	//sn.delink("Pesho", "Ivan");
+	//sn.ban("Ivan", "Gosho");
+	sn.remove("Ivan");
 
 	return 0;
 }

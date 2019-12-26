@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <iterator>
 #include <vector>
 #include <map>
 
@@ -28,17 +29,10 @@ struct User {
 //	enum friendship_type { normal, relative, bestie };
 //};
 
-enum friendship_type { normal, relative, bestie };
+enum friendship_type { normal, relative, bestie, blocked, being_blocked };
 
 
 class SocialNetwork {
-
-private:
-	std::vector<std::vector<std::pair<int, friendship_type>>> friend_list;
-	std::map<std::string, int> hash_table;
-	std::vector<User*> users;
-
-	void print_friend_list(int index);
 
 public:
 	SocialNetwork();
@@ -48,9 +42,20 @@ public:
 	bool create(std::string name, int age);
 	bool link(std::string name1, std::string name2, friendship_type type = normal);
 	bool find(std::string name);
+	bool ban(std::string name1, std::string name2);
+	bool remove(std::string name);
+	bool delink(std::string name1, std::string name2);
 
-	void remove(std::string name);
-	void delink(std::string name1, std::string name2);
+
+private:
+	std::vector<std::vector<std::pair<int, friendship_type>>> friend_list;
+	std::map<std::string, int> hash_table;
+	std::vector<User*> users;
+
+	bool check_user(std::string name);
+	void delink_user(int index, int user_pos);
+	void ban_user(int index, int user_pos, friendship_type type);
+	void print_friend_list(int index);
 
 };
 
