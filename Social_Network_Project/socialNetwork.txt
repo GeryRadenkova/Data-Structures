@@ -1,0 +1,30 @@
+hash_table:
+Pesho 0
+Ivan 1
+Gosho 2
+Ana 3
+Geri 5
+Gabi 6
+end 
+users:
+Pesho 23
+Ivan 20
+Gosho 27
+Ana 21
+Kiro 22
+Geri 21
+Gabi 30
+Niki 25
+end 
+friend_list:
+index 0:2 0;3 1;5 0;7 2.
+index 1:2 0;3 0;6 0.
+index 2:0 0;1 0;3 1;5 2;6 2;7 0.
+index 3:0 1;1 0;2 1;5 0.
+index 4:1 2;2 0.
+index 5:0 0;2 2;3 0.
+index 6:1 0;2 2;7 0.
+index 7:0 2;2 0;6 0.
+end 
+free_positions:
+4.
